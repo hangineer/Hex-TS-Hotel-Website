@@ -6,7 +6,7 @@ import vue from '@vitejs/plugin-vue'
 // https://vitejs.dev/config/
 export default defineConfig({
   base: process.env.NODE_ENV === 'production'
-  ? '/RoomsOrder/' : '/',
+  ? '/RoomsOrderForked/' : '/',
   plugins: [
     vue(),
   ],
@@ -17,8 +17,8 @@ export default defineConfig({
   },
   css: {
     preprocessorOptions: {
-      scss: { 
-        additionalData: `@import "@/assets/scss/bootstrap";` 
+      scss: {
+        additionalData: `@import "@/assets/scss/bootstrap";`
       },
     },
   }

@@ -24,6 +24,6 @@
     # git push -f git@github.com:RayChen1996/RayChen1996.github.io.git main
 
     # if you are deploying to hhttps://github.com/RayChen1996/RoomsOrder
-     git push -f https://github.com/RayChen1996/RoomsOrder.git main:gh-pages
+     git push -f https://github.com/hangineer/RoomsOrderForked.git main:gh-pages
 
     cd -
