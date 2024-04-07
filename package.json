@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "homepage": "https://raychen1996.github.io/RoomsOrder",
+  "homepage": "https://hangineer.github.io/RoomsOrderForked",
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
