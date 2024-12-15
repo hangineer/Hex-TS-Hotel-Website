@@ -23,7 +23,6 @@
           {{ item.tabName }}
         </li>
       </ul>
-
       <router-view></router-view>
     </div>
     <img src="@/assets/image/mobile/Line.png" alt="Line" class="line" />
@@ -31,10 +30,16 @@
 </template>
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, onMounted } from 'vue'
 import type { ComputedRef } from 'vue'
+import { storeToRefs } from 'pinia'
 import type { userTab, userInfo } from '../../interface/user'
 import globalMix from '../../mixin/globalMix'
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
+const { getUserInfo } = userStore
+const { user } = storeToRefs(userStore)
 
 const route = useRoute()
 const router = useRouter()
@@ -50,9 +55,12 @@ const tabs = ref<userTab[]>([
   }
 ])
 
-watch(() => route.path, () => checkAuth())
-const user: ComputedRef<userInfo> = computed(() => localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') as string) :  {})
+watch(
+  () => route.path,
+  () => checkAuth(),
+)
 </script>
+
 <style lang="scss" scoped>
 .userBanner {
   background-image: url('https://images.unsplash.com/photo-1606744837616-56c9a5c6a6eb?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');

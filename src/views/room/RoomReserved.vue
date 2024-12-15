@@ -233,7 +233,7 @@
             <template v-if="roomInfo.amenityInfo">
               <p class="sub-title sub-title-primary">備品提供</p>
               <div class="bg-white rounded p-4 text-center">
-                 <!-- @vue-skip -->
+                <!-- @vue-skip -->
                 <RoomService :service="roomInfo.amenityInfo" />
               </div>
             </template>
@@ -266,7 +266,7 @@
       </div>
     </div>
     <!-- Add this after your main template -->
-     <!-- <div
+    <!-- <div
       class="modal fade"
       id="confirmationModal"
       tabindex="-1"
@@ -366,6 +366,7 @@ export default {
     routeParams() {
       return this.$route.params
     },
+    // TODO: 改成取 userStore
     user () {
       return JSON.parse(localStorage.getItem('user') as string)
     }
@@ -438,213 +439,3 @@ export default {
   },
 }
 </script>
-
-<!-- <script setup lang=ts>
-import { useRoute, useRouter } from 'vue-router'
-// import {} from 'sweetalert2'
-import { type userInfo } from '@/interface/user'
-const router = useRoute()
-const _router = useRouter()
-
-import RoomService from '../../components/Common/RoomService.vue'
-import { type Service } from '@/interface/order'
-import { ref, watch, onMounted } from 'vue'
-import fetchAPI from '../../mixin/fetchAPI'
-import dayjs from 'dayjs'
-// @ts-ignore
-import CityCountyData from '../../assets/json/CityCountyData'
-import type { CityCounty, AreaListData } from '../../interface/signup'
-const userData = JSON.parse(localStorage.getItem('user') as string)
-console.log(userData)
-
-
-const { id, startdate, days, people } = router.params
-const numericDays = parseInt(days as string, 10) // 將 days 轉換為數字
-const _startdate = dayjs(startdate as string).format('YYYY/MM/DD')
-
-console.log(router.params)
-// 將 startdate 轉換為日期物件
-const startDateObject = dayjs(_startdate)
-
-// 使用 dayjs 的 add 方法加上指定天數，得到結束日期
-const endDateObject = startDateObject.add(numericDays, 'day') // 將字串轉換為數字
-
-// 將結束日期格式化為 'YYYY/MM/DD'
-const formattedEndDate = endDateObject.format('YYYY/MM/DD')
-
-const data = ref<userInfo>({
-  _id: userData?._id,
-  name: '',
-  phone: '',
-  birthday: new Date(userData?.birthday).toLocaleDateString(),
-  address: {
-    zipcode: 100,
-    detail: ''
-  },
-  email: '',
-  createdAt: '',
-  updatedAt: ''
-})
-function autoCompleteMemberData() {
-  data.value.name = userData.name
-  data.value.phone = userData.phone
-  data.value.address.detail = userData.address.detail
-  data.value.email = userData.email
-  data.value.address.zipcode = userData.address.zipcode
-}
-const userAddress = ref<string>('')
-
-// 地址轉換
-const cityData = ref<CityCounty>({
-  CityName: '',
-  CityEngName: '',
-  AreaList: []
-})
-onMounted(() => {
-  // if (userData === null) {
-  //   console.log('replace')
-  //   _router.push('login')
-  //   return
-  // }
-  CityCountyData.forEach((city: CityCounty) => {
-    const currCity = city.AreaList.find((area) => Number(area.ZipCode) === userData.address.zipcode)
-    if (currCity) {
-      cityName.value = city.CityName
-      cityData.value = city
-    }
-  })
-
-  setAreaList()
-  fullAddress()
-  LoadRoomPriceDetailInfoRoomId()
-})
-function fullAddress() {
-  const address = data.value.address
-
-  // userAddress.value =
-  //   cityData.value.CityName +
-  //   cityData.value.AreaList.find(
-  //     (area: { ZipCode: string }) => Number(area.ZipCode) === address.zipcode
-  //   )!.AreaName +
-  //   address.detail
-}
-
-const toRoomDetail = (id: string) => {
-  _router.push({ name: 'roomDetail', params: { id } })
-  // window.scrollTo({ top: 0, behavior: 'smooth' })
-}
-// 日期區間設定
-const birthArr: string[] = data.value.birthday.split('/')
-
-const birthYear = ref(Number(birthArr[0]))
-const birthMonth = ref(Number(birthArr[1]))
-const birthDay = ref(Number(birthArr[2]))
-const daysRange = ref<number>(31)
-const setDaysRange = () => {
-  if (birthMonth.value === 2) {
-    daysRange.value = birthYear.value % 4 ? 28 : 29
-  } else if ([1, 3, 5, 7, 8, 10, 12].includes(birthMonth.value)) {
-    daysRange.value = 31
-  } else {
-    daysRange.value = 30
-  }
-}
-
-async function createOrder() {
-  if (
-    data.value.name.length === 0 ||
-    data.value.phone.length === 0 ||
-    data.value.email.length === 0 ||
-    data.value.address.detail.length === 0
-  ) {
-    alert('有資訊未填寫')
-    return
-  }
-  console.log(data.value.name)
-  console.log(data.value.phone)
-  console.log(data.value.address.detail)
-
-  // const res = await fetchAPI(`/api/v1/user/check`, 'GET', '')
-  // console.log(res)
-  // const { status } = res
-  // if(!status) {
-  //   _router.push('/login')
-  //   return
-  // }
-    const _sendData = {
-      roomId: id,
-      checkInDate: _startdate,
-      checkOutDate: formattedEndDate,
-      peopleNum: people,
-      userInfo: {
-        address: {
-          zipcode: 802,
-          detail: data.value.address.detail
-        },
-        name: data.value.name,
-        phone: data.value.phone,
-        email: data.value.email
-      }
-    }
-    const postOrderRes = await fetchAPI(`/api/v1/orders`, 'POST', _sendData)
-    // console.log(postOrderRes)
-    if (postOrderRes.status) {
-      _router.push(`/BookingResult`)
-    }
-}
-const roomId = ref<string>('')
-const _areaInfo = ref<string>('')
-const _bedInfo = ref<string>('')
-const _layoutInfo = ref<Array<Service>>([])
-const _facilityInfo = ref<Array<Service>>([]) //房內設備
-const _amenityInfo = ref<Array<Service>>([]) //備品提供
-const _maxPeople = ref<string>('')
-const _imageUrl = ref<string>('')
-
-const _name = ref<string>('')
-const _price = ref<string>('')
-
-async function LoadRoomPriceDetailInfoRoomId() {
-  const roomID = id //'65b1142f11f699788b5bc8ca' //localStorage.getItem('roomId')
-
-  const res = await fetchAPI(`/api/v1/rooms/${roomID}`, 'GET', '')
-  console.log(res)
-  const { status } = res
-  if (status) {
-    const {
-      areaInfo,
-      bedInfo,
-      amenityInfo,
-      facilityInfo,
-      layoutInfo,
-      maxPeople,
-      name,
-      price,
-      imageUrl
-    } = res.result
-    _areaInfo.value = areaInfo
-    _layoutInfo.value = layoutInfo
-    _bedInfo.value = bedInfo
-    _maxPeople.value = `1-${maxPeople}人`
-    _name.value = name
-    _price.value = price
-    _facilityInfo.value = facilityInfo
-    _amenityInfo.value = amenityInfo
-    _imageUrl.value = imageUrl
-  } else {
-    console.log(res)
-  }
-}
-watch(() => birthYear.value, setDaysRange)
-watch(() => birthMonth.value, setDaysRange)
-
-// 地址設定
-const areaList = ref<AreaListData[]>([])
-const cityName = ref<string>('')
-const setAreaList = () => {
-  const currCity = CityCountyData.find((item: CityCounty) => item.CityName === cityName.value)
-
-  console.log(currCity)
-  areaList.value = currCity.AreaList
-}
-</script> -->

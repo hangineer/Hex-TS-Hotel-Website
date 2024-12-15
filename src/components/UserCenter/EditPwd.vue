@@ -54,17 +54,21 @@
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'
+import { storeToRefs } from 'pinia'
 // @ts-ignore
 import { checkPassword } from '../../mixin/validate'
 import fetchAPI from '../../mixin/fetchAPI'
 import Swal from 'sweetalert2'
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
+const { user } = storeToRefs(userStore)
 
 const resetPwd = ref<boolean>(false)
 
-const userData = JSON.parse(localStorage.getItem('user') as string)
 const data = ref({
-  userId: userData._id,
-  email: userData.email,
+  userId: user._id,
+  email: user.email,
   oldPassword: '',
   newPassword: '',
 })
@@ -87,6 +91,7 @@ async function editPwd() {
   }
 }
 </script>
+
 <style lang="scss" scoped>
 .pwdPoint {
   width: 8px;

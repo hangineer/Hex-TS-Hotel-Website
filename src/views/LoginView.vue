@@ -135,8 +135,11 @@ import { useRouter } from 'vue-router'
 // @ts-ignore
 import { Modal } from 'bootstrap'
 // import { headerMenuStore } from '../stores/headerMenu'
+import { useUserStore } from '@/stores/user'
 
 // const headerMenu = headerMenuStore()
+const userStore = useUserStore()
+
 const router = useRouter()
 const rememberAcc = ref<boolean>(false)
 const userInfo = ref<AccountData>({
@@ -173,6 +176,7 @@ async function login() {
     localStorage.removeItem('email')
   }
   localStorage.setItem('token', res.token)
+  userStore.setUserInfo(res.result)
   router.push('/user')
 }
 

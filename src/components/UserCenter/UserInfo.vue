@@ -82,11 +82,11 @@ import fetchAPI from '../../mixin/fetchAPI'
 import Swal from 'sweetalert2'
 // @ts-ignore
 import CityCountyData from '../../assets/json/CityCountyData'
-
-import type {CityCounty,AreaListData} from '../../interface/signup'
+import type { CityCounty, AreaListData } from '../../interface/signup'
 
 const editInfo = ref<boolean>(false)
 
+// TODO: 改成取 userStore
 const userData = JSON.parse(localStorage.getItem('user') as string)
 const data = ref({
   userId: userData._id,
@@ -119,10 +119,7 @@ async function editUserInfo() {
     data.value.birthday = new Date(birthday).toLocaleDateString()
     fullAddress()
   }
-  
 }
-
-
 
 // 地址轉換
 const cityData = ref<CityCounty>({
@@ -172,4 +169,8 @@ const setAreaList = () => {
   const currCity = CityCountyData.find((item: CityCounty) => item.CityName === cityName.value)
   areaList.value = currCity.AreaList
 }
+watch(
+  () => cityName.value,
+  () => setAreaList()
+)
 </script>

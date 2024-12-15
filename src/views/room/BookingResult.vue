@@ -17,7 +17,7 @@
                 />
               </div>
               <div>
-                <h3>恭喜，{{ data.name }}！</h3>
+                <h3>恭喜，{{ user.name }}！</h3>
                 <h3>您已預訂成功</h3>
               </div>
             </div>
@@ -52,15 +52,15 @@
             <div class="py-3"></div>
 
             <div>姓名</div>
-            <span>{{ data.name }} </span>
+            <span>{{ user.name }} </span>
             <div class="py-3"></div>
 
             <div>手機號碼</div>
-            <span>{{ data.phone }} </span>
+            <span>{{ user.phone }} </span>
             <div class="py-3"></div>
 
             <div>電子信箱</div>
-            <span>{{ data.email }} </span>
+            <span>{{ user.email }} </span>
             <div class="py-3"></div>
           </div>
           <div class="col-md-5 rounded text-black">
@@ -92,11 +92,15 @@
 <script setup lang="ts">
 
 import { useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import { ref, watch, onMounted } from 'vue'
-import NextRoom from '../../components/UserCenter/NextRoom.vue'
 import fetchAPI from '../../mixin/fetchAPI'
+import { useUserStore } from '@/stores/user'
+import NextRoom from '../../components/UserCenter/NextRoom.vue'
+
 import type { orderData } from '../../interface/order'
 import { type userInfo } from '@/interface/user'
+
 const router = useRouter()
 const _OrderData = ref<orderData>({
   _id: '',
@@ -114,34 +118,22 @@ const _OrderData = ref<orderData>({
 })
 
 const { roomInfo } = defineProps(['roomInfo'])
-const userData = JSON.parse(localStorage.getItem('user') as string)
-const data = ref<userInfo>({
 
-  _id: '',
-  name: '',
-  phone: '',
-  birthday: '',
-  address: {
-    zipcode: 1,
-    detail: ''
-  },
-  email: '',
-  createdAt: '',
-  updatedAt: ''
-})
-// const _userName = ref<string>('')
-// const _phone = ref<string>('')
-// const _email = ref<string>('')
+const userStore = useUserStore()
+const { getUserInfo } = userStore
+const { user } = storeToRefs(userStore)
 
 onMounted(() => {
-  data.value.name = userData.name
-  data.value.phone = userData.phone
-  data.value.email = userData.email
+  console.log('user', user);
+
+  getUserInfo();
   fetchOrderDetail()
 })
+
 function gotoHistoryOrderPage() {
   router.push('/user/myOrder')
 }
+
 async function fetchOrderDetail() {
   const res = await fetchAPI(`/api/v1/orders/`, 'GET')
   const { result } = res

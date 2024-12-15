@@ -1,13 +1,9 @@
 import fetchAPI from './fetchAPI';
 import Swal from 'sweetalert2'
 import { useRouter } from 'vue-router'
+import router from '@/router';
 
 const mixin = {
-  data () {
-    return {
-      
-    }
-  },
   methods: {
     fetchAPI,
     async checkAuth () {
@@ -17,11 +13,11 @@ const mixin = {
           icon: 'error',
           title: res.message
         })
+
         if (swal.isConfirmed || swal.isDismissed) {
           localStorage.removeItem('token')
-          useRouter().push('/')
+          router.push('/login')
         }
-        return
       }
     },
     getDate(timer: string | number) {

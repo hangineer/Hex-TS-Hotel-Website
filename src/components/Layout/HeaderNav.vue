@@ -35,7 +35,7 @@
       </li>
     </ul>
 
-    <span class="material-symbols-outlined text-white p-2 d-lg-none" @click="menuShow = true"> menu </span>
+    <span class="material-symbols-outlined text-white p-2 d-lg-none pointer" @click="menuShow = true"> menu </span>
   </nav>
 
   <div class="menu bg-black fixed-top min-vh-100 p-4 d-flex flex-column" v-if="menuShow">
@@ -55,6 +55,7 @@
     </ul>
   </div>
 </template>
+
 <script setup lang="ts">
 import { ref, computed, onMounted, onDeactivated } from 'vue'
 import { storeToRefs } from 'pinia'
@@ -63,6 +64,12 @@ import { headerMenuStore } from '../../stores/headerMenu'
 import { useRouter, useRoute } from 'vue-router'
 import type { userInfo } from '../../interface/user'
 import { roomTypeStore } from '@/stores/room'
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
+const { getUserInfo, clearUserInfo } = userStore
+const { user } = storeToRefs(userStore)
+
 
 const roomTypeStoreInfo = roomTypeStore()
 const { isShowDatePicker } = storeToRefs(roomTypeStoreInfo)
@@ -72,24 +79,23 @@ const headerMenu = headerMenuStore()
 const router = useRouter()
 const route = useRoute()
 const fixNav = computed(() => (['home', 'rooms'].includes(route.name as string)))
-const user: ComputedRef<userInfo> = computed(() => localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') as string) :  {})
-
 
 const headerNav = ref(null)
 const navTop = ref(0)
 onMounted(() => {
   window.addEventListener('scroll', () => navTop.value = window.pageYOffset)
+  getUserInfo()
 }),
 onDeactivated(() => {
   window.removeEventListener('scroll', () => navTop.value = window.pageYOffset)
 })
 
+// TODO: 登出寫在共用
 function signOut() {
   localStorage.removeItem('token')
-  localStorage.removeItem('user')
+  clearUserInfo()
   router.push('/')
 }
-
 </script>
 
 <style lang="scss" scoped>
