@@ -9,7 +9,7 @@ export const useUserStore = defineStore('user', () => {
     localStorage.setItem('user', JSON.stringify(userInfo))
   }
   const clearUserInfo = () => {
-    user.value = {}
+    user.value = {} as userInfo
     localStorage.removeItem('user')
   }
   const getUserInfo = (): userInfo => {

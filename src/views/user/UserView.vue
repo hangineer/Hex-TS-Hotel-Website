@@ -4,7 +4,6 @@
         <div class="col-12 col-lg-5">
           <section class="bg-white p-5 p-lg-7 rounded-6">
             <EditPwd v-if="user._id" />
-            <div>user= {{ user }}</div>
           </section>
         </div>
         <div class="col-12 col-lg-7">

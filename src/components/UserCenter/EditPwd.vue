@@ -67,8 +67,8 @@ const { user } = storeToRefs(userStore)
 const resetPwd = ref<boolean>(false)
 
 const data = ref({
-  userId: user._id,
-  email: user.email,
+  userId: user.value._id,
+  email: user.value.email,
   oldPassword: '',
   newPassword: '',
 })
